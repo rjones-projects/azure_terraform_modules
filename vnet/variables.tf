@@ -42,19 +42,38 @@ variable "create_network_watcher" {
   description = "Controls if Network Watcher resources should be created for the Azure subscription"
   default     = true
 }
-
+variable "subnet_delegations_actions" { #needed as there is a bug in the provider which toggles actions in some cases (e.g. Microsoft.Sql/managedInstances)
+  type = map(list(string))
+  default = {
+    "Microsoft.Web/serverFarms"                       = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    "Microsoft.ContainerInstance/containerGroups"     = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    "Microsoft.Netapp/volumes"                        = ["Microsoft.Network/networkinterfaces/*", "Microsoft.Network/virtualNetworks/subnets/join/action"]
+    "Microsoft.HardwareSecurityModules/dedicatedHSMs" = ["Microsoft.Network/networkinterfaces/*", "Microsoft.Network/virtualNetworks/subnets/join/action"]
+    "Microsoft.ServiceFabricMesh/networks"            = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    "Microsoft.Logic/integrationServiceEnvironments"  = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    "Microsoft.Batch/batchAccounts"                   = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    "Microsoft.Sql/managedInstances"                  = ["Microsoft.Network/virtualNetworks/subnets/join/action", "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action", "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"]
+    "Microsoft.Web/hostingEnvironments"               = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    "Microsoft.BareMetal/CrayServers"                 = ["Microsoft.Network/networkinterfaces/*", "Microsoft.Network/virtualNetworks/subnets/join/action"]
+    "Microsoft.Databricks/workspaces"                 = ["Microsoft.Network/virtualNetworks/subnets/join/action", "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action", "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"]
+    "Microsoft.BareMetal/AzureVMware"                 = ["Microsoft.Network/networkinterfaces/*", "Microsoft.Network/virtualNetworks/subnets/join/action"]
+    "Microsoft.StreamAnalytics/streamingJobs"         = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    "Microsoft.DBforPostgreSQL/serversv2"             = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    "Microsoft.AzureCosmosDB/clusters"                = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+  }
+}
 variable "subnets" {
   description = "For each subnet, create an object that describes the subnet"
   type = map(object({
     subnet_address_prefix                         = string,
     service_endpoints                             = optional(list(string), null),
-    private_endpoint_network_policies_enabled     = optional(bool, false),
+    private_endpoint_network_policies_enabled     = optional(bool, true),
     private_link_service_network_policies_enabled = optional(bool, false),
     delegation = optional(object({
       name = optional(string),
       service_delegation = optional(object({
         name    = optional(string),
-        actions = optional(list(string)),
+        # actions = optional(list(string)),
       }),{})
     }),null),
     nsg_inbound_rules = optional(map(object({
