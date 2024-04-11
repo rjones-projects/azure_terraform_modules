@@ -30,7 +30,7 @@ variable "create_ddos_plan" {
 
 variable "dns_servers" {
   description = "List of dns servers to use for virtual network"
-  default     = ["172.17.3.4","172.17.3.5"]
+  default     = ["172.17.3.4", "172.17.3.5"]
 }
 
 variable "ddos_plan_name" {
@@ -44,8 +44,42 @@ variable "create_network_watcher" {
 }
 
 variable "subnets" {
-  description = "For each subnet, create an object that contain fields"
-  default     = {}
+  description = "For each subnet, create an object that describes the subnet"
+  type = map(object({
+    subnet_address_prefix                         = string,
+    service_endpoints                             = optional(list(string), null),
+    private_endpoint_network_policies_enabled     = optional(bool, false),
+    private_link_service_network_policies_enabled = optional(bool, false),
+    delegation = optional(object({
+      name = optional(string),
+      service_delegation = optional(object({
+        name    = optional(string),
+        actions = optional(list(string)),
+      }),{})
+    }),null),
+    nsg_inbound_rules = optional(map(object({
+      name                       = optional(string),
+      priority                   = optional(number),
+      direction                  = optional(string, "Inbound"),
+      access                     = optional(string, "Allow"),
+      protocol                   = optional(string, "Tcp"),
+      source_port_range          = optional(string, "*"),
+      destination_port_range     = optional(string, "*"),
+      source_address_prefix      = optional(string, "*"),
+      destination_address_prefix = optional(string, "*"),
+    })),{}),
+    nsg_outbound_rules = optional(map(object({
+      name                       = optional(string),
+      priority                   = optional(number),
+      direction                  = optional(string, "Outbound"),
+      access                     = optional(string, "Allow"),
+      protocol                   = optional(string, "Tcp"),
+      source_port_range          = optional(string, "*"),
+      destination_port_range     = optional(string, "*"),
+      source_address_prefix      = optional(string, "*"),
+      destination_address_prefix = optional(string, "*"),
+    })), {}),
+  }))
 }
 
 variable "gateway_subnet_address_prefix" {

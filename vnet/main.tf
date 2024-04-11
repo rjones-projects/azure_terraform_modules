@@ -36,7 +36,7 @@ resource "azurerm_virtual_network" "vnet" {
   name                = var.vnetwork_name
   location            = local.location
   resource_group_name = local.resource_group_name
-  address_space       = var.vnet_address_space
+  address_space       = [var.vnet_address_space]
   dns_servers         = var.dns_servers
   tags                = merge({ "Name" = format("%s", var.vnetwork_name) }, var.tags, )
 
@@ -104,18 +104,18 @@ resource "azurerm_network_watcher" "nwatcher" {
 
 resource "azurerm_subnet" "snet" {
   for_each                                       = var.subnets
-  name                                           = each.value.subnet_name
+  name                                           = each.key
   resource_group_name                            = local.resource_group_name
   virtual_network_name                           = azurerm_virtual_network.vnet.name
-  address_prefixes                               = each.value.subnet_address_prefix
-  service_endpoints                              = lookup(each.value, "service_endpoints", [])
-  private_endpoint_network_policies_enabled = lookup(each.value, "private_endpoint_network_policies_enabled", null)
-  private_link_service_network_policies_enabled  = lookup(each.value, "private_link_service_network_policies_enabled", null)
+  address_prefixes                               = [each.value.subnet_address_prefix]
+  service_endpoints                              = lookup(each.value, "service_endpoints", null)
+  private_endpoint_network_policies_enabled =  each.value.private_endpoint_network_policies_enabled
+  private_link_service_network_policies_enabled  = each.value.private_link_service_network_policies_enabled
 
   dynamic "delegation" {
-    for_each = lookup(each.value, "delegation", {}) != {} ? [1] : []
+    for_each = each.value.delegation != null ? [0] : []
     content {
-      name = lookup(each.value.delegation, "name", null)
+      name = each.value.delegation.name
       service_delegation {
         name    = lookup(each.value.delegation.service_delegation, "name", null)
         actions = lookup(each.value.delegation.service_delegation, "actions", null)
@@ -130,12 +130,12 @@ resource "azurerm_subnet" "snet" {
 #-----------------------------------------------
 resource "azurerm_network_security_group" "nsg" {
   for_each            = var.subnets
-  name                = lower("nsg-${each.value.subnet_name}")
+  name                = lower("nsg-${each.key}")
   resource_group_name = local.resource_group_name
   location            = local.location
   tags                = merge({ "ResourceName" = lower("nsg-${each.key}_in") }, var.tags, )
   dynamic "security_rule" {
-    for_each = concat(lookup(each.value, "nsg_inbound_rules", []), lookup(each.value, "nsg_outbound_rules", []))
+    for_each = merge(each.value.nsg_inbound_rules, each.value.nsg_outbound_rules)
     content {
       name                       = security_rule.value[0] == "" ? "Default_Rule" : security_rule.value[0]
       priority                   = security_rule.value[1]

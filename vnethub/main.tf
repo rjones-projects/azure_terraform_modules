@@ -100,10 +100,10 @@ resource "azurerm_subnet" "snet" {
   dynamic "delegation" {
     for_each = lookup(each.value, "delegation", {}) != {} ? [1] : []
     content {
-      name = lookup(each.value.delegation, "name", null)
+      name = each.value.delegation.name
       service_delegation {
-        name    = lookup(each.value.delegation.service_delegation, "name", null)
-        actions = lookup(each.value.delegation.service_delegation, "actions", null)
+        name    = each.value.delegation.service_delegation.name
+        actions = each.value.delegation.service_delegation.actions
       }
     }
   }
