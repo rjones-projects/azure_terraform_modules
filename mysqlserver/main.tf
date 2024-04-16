@@ -1,6 +1,6 @@
 resource "azurerm_mysql_server" "mysql_server" {
   location            = "${var.location}"
-  resource_group_name = "${var.resourceGroup}"
+  resource_group_name = "${var.resource_group}"
   name                = "${var.name}"
 
   sku_name = "${var.Sku}"

@@ -9,7 +9,7 @@
 
 # Constructed names of resources
 locals {
-    resourceGroupName  = "rg-${var.projectName}%{if var.environment!=""}-${var.environment}%{endif}-${var.location}"
+    resource_group_name  = "rg-${var.projectName}%{if var.environment!=""}-${var.environment}%{endif}-${var.location}"
     tags = {
     environment = "development"
     costcenter  = "it"
@@ -21,7 +21,7 @@ locals {
  #Create the Resource Group
 resource "azurerm_resource_group" "rg" {
 
-    name     = local.resourceGroupName
+    name     = local.resource_group_name
     location = "${var.location}"
-    tags = merge({ "ResourceName" = format("%s", local.resourceGroupName) }, local.tags, var.tags )
+    tags = merge({ "ResourceName" = format("%s", local.resource_group_name) }, local.tags, var.tags )
 }

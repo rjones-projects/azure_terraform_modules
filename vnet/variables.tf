@@ -65,6 +65,7 @@ variable "subnet_delegations_actions" { #needed as there is a bug in the provide
 variable "subnets" {
   description = "For each subnet, create an object that describes the subnet"
   type = map(object({
+    name = string,
     subnet_address_prefix                         = string,
     service_endpoints                             = optional(list(string), null),
     private_endpoint_network_policies_enabled     = optional(bool, true),
@@ -72,24 +73,26 @@ variable "subnets" {
     delegation = optional(object({
       name = optional(string),
       service_delegation = optional(object({
-        name    = optional(string),
+        name = optional(string),
         # actions = optional(list(string)),
-      }),{})
-    }),null),
+      }), {})
+    }), null),
     nsg_inbound_rules = optional(map(object({
-      name                       = optional(string),
-      priority                   = optional(number),
-      direction                  = optional(string, "Inbound"),
+      # name                       = string,
+      priority                   = number,
+      direction                  = optional(string, "Inbound"),      
       access                     = optional(string, "Allow"),
       protocol                   = optional(string, "Tcp"),
       source_port_range          = optional(string, "*"),
       destination_port_range     = optional(string, "*"),
       source_address_prefix      = optional(string, "*"),
       destination_address_prefix = optional(string, "*"),
-    })),{}),
+      description                = optional(string, null),      
+    })), {}),
     nsg_outbound_rules = optional(map(object({
-      name                       = optional(string),
-      priority                   = optional(number),
+      # name                       = string,      
+      description                = optional(string, null),
+      priority                   = number,
       direction                  = optional(string, "Outbound"),
       access                     = optional(string, "Allow"),
       protocol                   = optional(string, "Tcp"),

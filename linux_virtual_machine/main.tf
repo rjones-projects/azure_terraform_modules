@@ -1,7 +1,7 @@
 #get the existing vNet
 data "azurerm_virtual_network" "vnet" {
   name                 = local.existingVnetName
-  resource_group_name  = local.existingVnetResourceGroupName
+  resource_group_name  = local.existingVnetresource_group_name
 }
 
 #get the existing subnets
@@ -24,7 +24,7 @@ locals {
   storage_account_name  = "${var.prefix}store${var.projectName}vm"
   vmSubnetName         = "${var.subnet_name}"
   existingVnetName      = "${var.vnet_name}"
-  existingVnetResourceGroupName  = "${var.vnet_resource_group_name}"  
+  existingVnetresource_group_name  = "${var.vnet_resource_group_name}"  
   vm_size               = "${var.vm_size}"
   vm_image_publisher    = "${var.vm_image_publisher}"
   vm_image_offer    	  = "${var.vm_image_offer}"

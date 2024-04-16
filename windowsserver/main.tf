@@ -17,16 +17,16 @@ locals {
 # resource "azurerm_public_ip" "pip" {
 #  count    = var.createPublicIpAddress ? 1 : 0
 #  name                          = "${var.serverName}-publicip-${random_string.id.result}"
-#  location                      = "${var.resourceGroup.location}"
-#  resource_group_name           = "${var.resourceGroup.name}"
+#  location                      = "${var.resource_group.location}"
+#  resource_group_name           = "${var.resource_group.name}"
 #  domain_name_label             = var.domainNameLabel
 #  allocation_method             = "Static"
 # }
 
 resource "azurerm_network_interface" "nic" {
   name                                  = "${var.serverName}-nic-${random_string.id.result}"
-  location                              = "${var.resourceGroup.location}"
-  resource_group_name                   = "${var.resourceGroup.name}"
+  location                              = "${var.resource_group.location}"
+  resource_group_name                   = "${var.resource_group.name}"
 
   enable_accelerated_networking       = true
   
@@ -44,8 +44,8 @@ resource "azurerm_network_interface" "nic" {
 
 resource "azurerm_windows_virtual_machine" "vm" {
   name                  = "${var.serverName}"
-  location              = "${var.resourceGroup.location}"
-  resource_group_name   = "${var.resourceGroup.name}"
+  location              = "${var.resource_group.location}"
+  resource_group_name   = "${var.resource_group.name}"
   network_interface_ids = [azurerm_network_interface.nic.id]
   size                  = "${var.vmSize}"
   admin_username        = var.vmAdminUserName
@@ -72,8 +72,8 @@ resource "azurerm_windows_virtual_machine" "vm" {
 resource "azurerm_managed_disk" "data" {
   for_each             = local.vm_data_disks
   name                 = "${var.serverName}-DataDisk-${each.value.idx}"
-  resource_group_name  = "${var.resourceGroup.name}"
-  location             = "${var.resourceGroup.location}"
+  resource_group_name  = "${var.resource_group.name}"
+  location             = "${var.resource_group.location}"
   storage_account_type = lookup(each.value.data_disk, "storage_account_type", "StandardSSD_LRS")
   create_option        = "Empty"
   disk_size_gb         = each.value.data_disk.disk_size_gb

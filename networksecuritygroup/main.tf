@@ -1,8 +1,13 @@
+#Get the RG
+data "azurerm_resource_group" "nsg" {
+  name = var.resource_group_name
+}
+
 #create the NSG
 resource "azurerm_network_security_group" "nsg" {
-  name                = "${var.subnet.name}-NSG"
-  location            = var.resourceGroup.location
-  resource_group_name = var.resourceGroup.name
+  name                = "nsg-${var.subnet.name}"
+  location            = var.resource_group.location
+  resource_group_name = var.resource_group_name
   tags = var.tags
 }
 
@@ -14,7 +19,7 @@ resource "azurerm_subnet_network_security_group_association" "nsg" {
 
 #Add the rules for the NSG
 resource "azurerm_network_security_rule" "nsgrules" {
-    for_each                      = var.nsgRules 
+    for_each                      = var.nsg_inbound_rules 
     name                          = each.key
     direction                     = each.value.direction
     access                        = each.value.access

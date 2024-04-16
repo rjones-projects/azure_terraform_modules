@@ -13,7 +13,7 @@ locals {
   frontend_ip_configuration_name = "appgw-${var.app_gateway_name}-${local.location}-feip"
   gateway_ip_configuration_name  = "appgw-${var.app_gateway_name}-${local.location}-gwipc"
 
-  resourceGroup = element(coalescelist(data.azurerm_resource_group.rgrp.*.name, azurerm_resource_group.rg.*.name, [""]), 0)
+  resource_group = element(coalescelist(data.azurerm_resource_group.rgrp.*.name, azurerm_resource_group.rg.*.name, [""]), 0)
   # location      = element(coalescelist(data.azurerm_resource_group.rgrp.*.location, azurerm_resource_group.rg.*.location, [""]), 0)
   location      = var.location
 }
@@ -23,19 +23,19 @@ locals {
 #----------------------------------------------------------
 data "azurerm_resource_group" "rgrp" {
   count = var.create_resource_group == false ? 1 : 0
-  name  = var.resourceGroup.name
+  name  = var.resource_group.name
 }
 
 resource "azurerm_resource_group" "rg" {
   count    = var.create_resource_group ? 1 : 0
-  name     = lower(var.resourceGroup)
+  name     = lower(var.resource_group)
   location = var.location
-  tags     = merge({ "ResourceName" = format("%s", var.resourceGroup) }, var.tags, )
+  tags     = merge({ "ResourceName" = format("%s", var.resource_group) }, var.tags, )
 }
 
 data "azurerm_virtual_network" "vnet" {
   name                = var.virtual_network_name
-  resource_group_name = var.vnet_resource_group_name == null ? local.resourceGroup : var.vnet_resource_group_name
+  resource_group_name = var.vnet_resource_group_name == null ? local.resource_group : var.vnet_resource_group_name
 }
 
 data "azurerm_subnet" "snet" {
@@ -47,13 +47,13 @@ data "azurerm_subnet" "snet" {
 data "azurerm_log_analytics_workspace" "logws" {
   count               = var.log_analytics_workspace_name != null ? 1 : 0
   name                = var.log_analytics_workspace_name
-  resource_group_name = local.resourceGroup
+  resource_group_name = local.resource_group
 }
 
 data "azurerm_storage_account" "storeacc" {
   count               = var.storage_account_name != null ? 1 : 0
   name                = var.storage_account_name
-  resource_group_name = local.resourceGroup
+  resource_group_name = local.resource_group
 }
 
 #-----------------------------------
@@ -62,7 +62,7 @@ data "azurerm_storage_account" "storeacc" {
 resource "azurerm_public_ip" "pip" {
   name                = lower("pip-agw-${var.app_gateway_name}-${local.location}")
   location            = local.location
-  resource_group_name = local.resourceGroup
+  resource_group_name = local.resource_group
   allocation_method   = var.sku.tier == "Standard" ? "Dynamic" : "Static"
   sku                 = var.sku.tier == "Standard" ? "Basic" : "Standard"
   domain_name_label   = var.domain_name_label
@@ -74,7 +74,7 @@ resource "azurerm_public_ip" "pip" {
 #----------------------------------------------
 resource "azurerm_application_gateway" "main" {
   name                = lower("appgw-${var.app_gateway_name}-${local.location}")
-  resource_group_name = local.resourceGroup
+  resource_group_name = local.resource_group
   location            = local.location
   enable_http2        = var.enable_http2
   zones               = var.zones

@@ -3,7 +3,7 @@ variable "create_resource_group" {
   default     = false
 }
 
-variable "resourceGroup" {
+variable "resource_group" {
   description = "A container that holds related resources for an Azure solution"
   default     = ""
 }

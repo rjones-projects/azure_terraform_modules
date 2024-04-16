@@ -3,8 +3,8 @@ variable "serverName" {
   default     = ""
 }
 
-variable "resourceGroup" {
-  description = "resourceGroup of the Server"
+variable "resource_group" {
+  description = "resource_group of the Server"
   default     = ""
 }
 

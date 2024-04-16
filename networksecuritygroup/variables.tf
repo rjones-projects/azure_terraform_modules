@@ -1,17 +1,21 @@
-variable "subnet" {
-  description = "subnet to attach the Server"
+variable "subnet_id" {
+  type = optional(string,null)
+  description = "subnet to attach the nsg"
 }
 
-variable "resourceGroup" {
-  description = "resourceGroup of the Server"
+variable "resource_group_name" {
+  description = "resource_group of the nsg"
   default     = ""
 }
 
-variable "nsgRules" {
-  description = "rules for the NSG"
+variable "nsg_inbound_rules" {
+  description = "inbound rules for the NSG"
   default     = []
 }
-
+variable "nsg_outbound_rules" {
+  description = "inbound rules for the NSG"
+  default     = []
+}
 variable "tags" {
   default = {
     environment = "development"

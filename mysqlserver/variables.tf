@@ -6,8 +6,8 @@ variable "location" {
   description = "location of the MySQL Server"
   default     = ""
 }
-variable "resourceGroup" {
-  description = "resourceGroup of the MySQL Server"
+variable "resource_group" {
+  description = "resource_group of the MySQL Server"
   default     = ""
 }
 variable "Sku" {

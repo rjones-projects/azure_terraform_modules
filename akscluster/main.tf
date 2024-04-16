@@ -20,7 +20,7 @@ resource "random_string" "kubeletid" {
 module "kubeletIdentity"{
   source    = "../managedidentity"
   projectName     = var.cluster_name
-  resourceGroupName  =  var.resource_group_name
+  resource_group_name  =  var.resource_group_name
   location        = var.location
   environment     = var.environment
   uniqueSuffix    = "kubelet-${random_string.kubeletid.result}"

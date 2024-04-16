@@ -253,7 +253,7 @@ variable "network_rules" {
       default_action = "Deny"
       network_rule = [
         {
-          subnet_id  = "/subscriptions/xxxxxxxxxxxx/resourceGroups/xxxxxxxxxxxxxxx/providers/Microsoft.Network/virtualNetworks/xxxxxxx/subnets/xxxxxx"
+          subnet_id  = "/subscriptions/xxxxxxxxxxxx/resource_groups/xxxxxxxxxxxxxxx/providers/Microsoft.Network/virtualNetworks/xxxxxxx/subnets/xxxxxx"
           ignore_missing_vnet_service_endpoint = "true"
       }]
       ip_rules = ["xxx.xxx.xxx.xxx"]
