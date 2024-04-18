@@ -60,6 +60,7 @@ variable "subnet_delegations_actions" { #needed as there is a bug in the provide
     "Microsoft.StreamAnalytics/streamingJobs"         = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
     "Microsoft.DBforPostgreSQL/serversv2"             = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
     "Microsoft.AzureCosmosDB/clusters"                = ["Microsoft.Network/virtualNetworks/subnets/join/action"]
+    "Microsoft.ContainerService/managedClusters"      = ["Microsoft.Network/virtualNetworks/subnets/join/action", "Microsoft.Network/virtualNetworks/subnets/prepareNetworkPolicies/action", "Microsoft.Network/virtualNetworks/subnets/unprepareNetworkPolicies/action"]
   }
 }
 variable "subnets" {
@@ -91,7 +92,6 @@ variable "subnets" {
     })), {}),
     nsg_outbound_rules = optional(map(object({
       # name                       = string,      
-      description                = optional(string, null),
       priority                   = number,
       direction                  = optional(string, "Outbound"),
       access                     = optional(string, "Allow"),
@@ -100,6 +100,7 @@ variable "subnets" {
       destination_port_range     = optional(string, "*"),
       source_address_prefix      = optional(string, "*"),
       destination_address_prefix = optional(string, "*"),
+      description                = optional(string, null),
     })), {}),
   }))
 }

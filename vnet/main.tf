@@ -130,12 +130,12 @@ resource "azurerm_subnet" "snet" {
 #-----------------------------------------------
 resource "azurerm_network_security_group" "nsg" {
   for_each            = var.subnets
-  name                = lower("nsg-${each.key}")
+  name                = lower("nsg-${each.value.name}")
   resource_group_name = local.resource_group_name
   location            = local.location
   tags                = merge({ "ResourceName" = lower("nsg-${each.key}_in") }, var.tags, )
   dynamic "security_rule" {
-    for_each = each.value.nsg_inbound_rules
+    for_each = merge(each.value.nsg_inbound_rules,each.value.nsg_outbound_rules)
     #   for_each = merge(each.value.nsg_inbound_rules, each.value.nsg_outbound_rules)
     content {
       name                       = "snet-${security_rule.key}-${local.location}"

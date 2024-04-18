@@ -58,6 +58,7 @@ resource "azurerm_role_assignment" "aks-kubelet-rg-networkcontributer-role" {
 }
 
 resource "azurerm_role_assignment" "kubelet-private-dns-contributor-role" {
+  count = var.private_dns_zone_id != null ? 1: 0
   scope                = var.private_dns_zone_id
   role_definition_name = "Private DNS Zone Contributor"
   principal_id         = module.kubeletIdentity.principal_id
