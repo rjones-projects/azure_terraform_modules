@@ -5,17 +5,17 @@ variable "create_resource_group" {
 
 variable "resource_group_name" {
   description = "A container that holds related resources for an Azure solution"
-  default     = "rg-demo-westeurope-01"
+  default     = "rg-demo-uksouth-01"
 }
 
 variable "location" {
   description = "The location/region to keep all your network resources. To get the list of all locations with table format from azure cli, run 'az account list-locations -o table'"
-  default     = "westeurope"
+  default     = "uksouth"
 }
 
 variable "vnetwork_name" {
   description = "Name of your Azure Virtual Network"
-  default     = "vnet-azure-westeurope-001"
+  default     = "vnet-azure-uksouth-001"
 }
 
 variable "vnet_address_space" {
@@ -30,7 +30,7 @@ variable "create_ddos_plan" {
 
 variable "dns_servers" {
   description = "List of dns servers to use for virtual network"
-  default     = ["172.17.3.4", "172.17.3.5"]
+  default     = ["168.63.129.16"]
 }
 
 variable "ddos_plan_name" {

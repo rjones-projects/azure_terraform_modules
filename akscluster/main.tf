@@ -85,14 +85,14 @@ resource "azurerm_role_assignment" "aks-kubelet-noderg-identity-operator-role" {
   depends_on = [data.azurerm_resource_group.node]
 }
 
-# data "azurerm_subscription" "primary" {}
+data "azurerm_subscription" "primary" {}
 
-# resource "azurerm_role_assignment" "kubelet-identity-operator-role-aks-rg" {
-#   scope                = data.azurerm_subscription.primary.id
-#   role_definition_name = "Managed Identity Operator"
-#   principal_id         = module.kubeletIdentity.principal_id
-#   depends_on           = [resource.azurerm_kubernetes_cluster.main]
-# }
+resource "azurerm_role_assignment" "kubelet-identity-operator-role-aks-rg" {
+  scope                = data.azurerm_subscription.primary.id
+  role_definition_name = "Managed Identity Operator"
+  principal_id         = module.kubeletIdentity.principal_id
+  depends_on           = [resource.azurerm_kubernetes_cluster.main]
+}
 
 #----------------------------------------------
 #Create the AKS Cluster
